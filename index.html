@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖼️ Image Compressor - 이미지 압축기</title>
+    <meta name="description" content="브라우저에서 이미지 압축 및 리사이징. 서버 전송 없이 100% 클라이언트 처리.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0c0c14;
+            --bg-secondary: #14141f;
+            --bg-card: #1a1a28;
+            --bg-input: #12121c;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9090a0;
+            --text-muted: #606070;
+            --accent: #06b6d4;
+            --accent-light: #22d3ee;
+            --accent-glow: rgba(6, 182, 212, 0.3);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-input: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: rgba(0, 0, 0, 0.08);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo span {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+        }
+
+        .btn-accent:hover {
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            border: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            background: var(--bg-card);
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 2rem;
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        .drop-zone-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        .drop-zone h2 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .drop-zone p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .drop-zone input {
+            display: none;
+        }
+
+        /* Main Layout */
+        .main-content {
+            display: none;
+            gap: 2rem;
+        }
+
+        .main-content.active {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+        }
+
+        /* Preview Section */
+        .preview-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .preview-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: var(--bg-input);
+            border: none;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preview-tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .preview-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            background: var(--bg-input);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .preview-container img {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+        }
+
+        .preview-container canvas {
+            max-width: 100%;
+            max-height: 500px;
+        }
+
+        .comparison-slider {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            cursor: ew-resize;
+            z-index: 10;
+        }
+
+        .comparison-slider::before {
+            content: '⇔';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            font-size: 0.8rem;
+        }
+
+        .comparison-view {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .comparison-original, .comparison-compressed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .comparison-original {
+            clip-path: inset(0 50% 0 0);
+        }
+
+        .comparison-label {
+            position: absolute;
+            bottom: 1rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+
+        .comparison-original .comparison-label {
+            left: 1rem;
+        }
+
+        .comparison-compressed .comparison-label {
+            right: 1rem;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .stat-value.success {
+            color: var(--success);
+        }
+
+        .stat-value.warning {
+            color: var(--warning);
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            height: fit-content;
+        }
+
+        .controls-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .control-value {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--bg-input);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-input);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-group span {
+            font-size: 0.9rem;
+        }
+
+        .resize-inputs {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.75rem;
+        }
+
+        .resize-inputs input {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .resize-inputs input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .resize-inputs span {
+            color: var(--text-muted);
+        }
+
+        .format-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .format-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+            justify-content: center;
+            padding: 0.9rem;
+        }
+
+        /* File Info */
+        .file-info {
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Progress */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-content.active {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .drop-zone {
+                padding: 2rem 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Batch Processing */
+        .batch-list {
+            display: none;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .batch-list.active {
+            display: flex;
+        }
+
+        .batch-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .batch-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .batch-info {
+            flex: 1;
+        }
+
+        .batch-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .batch-size {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .batch-status {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        .batch-status.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .batch-status.done {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .batch-remove {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.25rem;
+        }
+
+        .batch-remove:hover {
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">🖼️</span>
+                <div>
+                    <h1>Image Compressor</h1>
+                    <span>브라우저에서 이미지 압축</span>
+                </div>
+            </div>
+            <button class="btn" id="themeToggle">🌙 다크</button>
+        </header>
+
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="dropZone">
+            <div class="drop-zone-icon">📁</div>
+            <h2>이미지를 드래그하거나 클릭하세요</h2>
+            <p>JPEG, PNG, WebP 지원 · 최대 10MB · 여러 파일 가능</p>
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple>
+        </div>
+
+        <!-- Batch List -->
+        <div class="batch-list" id="batchList"></div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Preview Section -->
+            <section class="preview-section">
+                <div class="preview-header">
+                    <div class="preview-tabs">
+                        <button class="preview-tab active" data-view="compressed">압축 결과</button>
+                        <button class="preview-tab" data-view="compare">비교</button>
+                        <button class="preview-tab" data-view="original">원본</button>
+                    </div>
+                    <button class="btn" id="newImage">🔄 새 이미지</button>
+                </div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <img id="previewImage" src="" alt="Preview">
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">원본 크기</div>
+                        <div class="stat-value" id="originalSize">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">압축 크기</div>
+                        <div class="stat-value" id="compressedSize">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">절감률</div>
+                        <div class="stat-value success" id="savings">-</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Controls Panel -->
+            <aside class="controls-panel">
+                <div class="controls-title">⚙️ 압축 설정</div>
+
+                <div class="file-info" id="fileInfo">
+                    <div class="file-name" id="fileName">-</div>
+                    <div class="file-meta">
+                        <span id="fileDimensions">-</span>
+                        <span id="fileType">-</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>품질</span>
+                        <span class="control-value" id="qualityValue">80%</span>
+                    </div>
+                    <input type="range" id="quality" min="10" max="100" value="80">
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>출력 포맷</span>
+                    </div>
+                    <select class="format-select" id="outputFormat">
+                        <option value="jpeg">JPEG (사진에 적합)</option>
+                        <option value="png">PNG (투명 배경)</option>
+                        <option value="webp">WebP (최신, 고효율)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="enableResize">
+                        <span>크기 조절</span>
+                    </label>
+                    <div class="resize-inputs" id="resizeInputs" style="display: none;">
+                        <input type="number" id="resizeWidth" placeholder="너비">
+                        <span>×</span>
+                        <input type="number" id="resizeHeight" placeholder="높이">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="maintainRatio" checked>
+                        <span>비율 유지</span>
+                    </label>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-accent" id="compressBtn">
+                        ⚡ 압축하기
+                    </button>
+                    <button class="btn btn-success" id="downloadBtn" disabled>
+                        ⬇️ 다운로드
+                    </button>
+                    <button class="btn" id="downloadAllBtn" style="display: none;">
+                        📦 전체 다운로드 (ZIP)
+                    </button>
+                </div>
+            </aside>
+        </div>
+
+        <footer>
+            <a href="https://github.com/answndud/ImageCompressor" target="_blank">View on GitHub</a>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast">
+        <span id="toastIcon">✅</span>
+        <span id="toastMessage">작업 완료!</span>
+    </div>
+
+    <!-- JSZip Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        // State
+        let originalImage = null;
+        let originalFile = null;
+        let compressedBlob = null;
+        let compressedDataUrl = null;
+        let files = [];
+        let currentIndex = 0;
+        let batchCompressedFiles = []; // ZIP 다운로드용 압축 파일 저장
+
+        // DOM Elements
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const mainContent = document.getElementById('mainContent');
+        const batchList = document.getElementById('batchList');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const qualitySlider = document.getElementById('quality');
+        const qualityValue = document.getElementById('qualityValue');
+        const outputFormat = document.getElementById('outputFormat');
+        const enableResize = document.getElementById('enableResize');
+        const resizeInputs = document.getElementById('resizeInputs');
+        const resizeWidth = document.getElementById('resizeWidth');
+        const resizeHeight = document.getElementById('resizeHeight');
+        const maintainRatio = document.getElementById('maintainRatio');
+        const compressBtn = document.getElementById('compressBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // Theme Toggle
+        const savedTheme = localStorage.getItem('image-compressor-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeButton(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('image-compressor-theme', next);
+            updateThemeButton(next);
+        });
+
+        function updateThemeButton(theme) {
+            themeToggle.textContent = theme === 'dark' ? '☀️ 라이트' : '🌙 다크';
+        }
+
+        // Drag and Drop
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(fileList) {
+            const validFiles = Array.from(fileList).filter(file => {
+                if (!file.type.match(/^image\/(jpeg|png|webp)$/)) {
+                    showToast('⚠️', `${file.name}: 지원하지 않는 형식입니다`);
+                    return false;
+                }
+                if (file.size > 10 * 1024 * 1024) {
+                    showToast('⚠️', `${file.name}: 10MB를 초과합니다`);
+                    return false;
+                }
+                return true;
+            });
+
+            if (validFiles.length === 0) return;
+
+            files = validFiles;
+            currentIndex = 0;
+
+            if (files.length === 1) {
+                loadSingleImage(files[0]);
+            } else {
+                loadBatchImages();
+            }
+        }
+
+        function loadSingleImage(file) {
+            originalFile = file;
+            batchList.classList.remove('active');
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalImage = new Image();
+                originalImage.onload = () => {
+                    showMainContent();
+                    updateFileInfo();
+                    compressImage();
+                };
+                originalImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function loadBatchImages() {
+            batchList.innerHTML = '';
+            batchList.classList.add('active');
+            dropZone.style.display = 'none';
+            mainContent.classList.remove('active');
+
+            files.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'batch-item';
+                item.dataset.index = index;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    item.innerHTML = `
+                        <img class="batch-thumb" src="${e.target.result}" alt="${file.name}">
+                        <div class="batch-info">
+                            <div class="batch-name">${file.name}</div>
+                            <div class="batch-size">${formatBytes(file.size)}</div>
+                        </div>
+                        <span class="batch-status pending">대기 중</span>
+                        <button class="batch-remove" data-index="${index}">✕</button>
+                    `;
+                };
+                reader.readAsDataURL(file);
+
+                batchList.appendChild(item);
+            });
+
+            // Add batch controls
+            const batchControls = document.createElement('div');
+            batchControls.className = 'batch-controls';
+            batchControls.style.cssText = 'display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;';
+            batchControls.innerHTML = `
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-accent" id="compressAllBtn" style="flex: 1;">⚡ 모두 압축</button>
+                    <button class="btn" id="clearBatchBtn">🗑️ 초기화</button>
+                </div>
+                <button class="btn btn-success" id="downloadZipBtn" style="display: none; width: 100%;">
+                    📦 ZIP으로 다운로드
+                </button>
+            `;
+            batchList.appendChild(batchControls);
+
+            document.getElementById('compressAllBtn').addEventListener('click', compressAllBatch);
+            document.getElementById('downloadZipBtn').addEventListener('click', downloadAsZip);
+            document.getElementById('clearBatchBtn').addEventListener('click', () => {
+                files = [];
+                batchCompressedFiles = [];
+                batchList.classList.remove('active');
+                dropZone.style.display = 'block';
+            });
+
+            batchList.addEventListener('click', (e) => {
+                if (e.target.classList.contains('batch-remove')) {
+                    const idx = parseInt(e.target.dataset.index);
+                    files.splice(idx, 1);
+                    if (files.length === 0) {
+                        batchList.classList.remove('active');
+                        dropZone.style.display = 'block';
+                    } else {
+                        loadBatchImages();
+                    }
+                }
+            });
+        }
+
+        async function compressAllBatch() {
+            const quality = qualitySlider.value / 100;
+            const format = outputFormat.value;
+            const items = batchList.querySelectorAll('.batch-item');
+            batchCompressedFiles = []; // 초기화
+            
+            // 압축 버튼 비활성화
+            const compressBtn = document.getElementById('compressAllBtn');
+            compressBtn.disabled = true;
+            compressBtn.textContent = '⏳ 압축 중...';
+
+            let totalOriginalSize = 0;
+            let totalCompressedSize = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const item = items[i];
+                const status = item.querySelector('.batch-status');
+                status.textContent = '압축 중...';
+                status.className = 'batch-status pending';
+
+                try {
+                    const dataUrl = await readFileAsDataUrl(file);
+                    const img = await loadImage(dataUrl);
+                    const blob = await compressImageToBlob(img, quality, format);
+                    
+                    batchCompressedFiles.push({
+                        name: file.name.replace(/\.[^.]+$/, `.${format}`),
+                        blob: blob,
+                        originalSize: file.size,
+                        compressedSize: blob.size
+                    });
+
+                    totalOriginalSize += file.size;
+                    totalCompressedSize += blob.size;
+
+                    const savings = ((1 - blob.size / file.size) * 100).toFixed(1);
+                    status.textContent = `-${savings}%`;
+                    status.className = 'batch-status done';
+                } catch (err) {
+                    status.textContent = '오류';
+                    status.className = 'batch-status pending';
+                }
+            }
+
+            // 압축 버튼 복원
+            compressBtn.disabled = false;
+            compressBtn.textContent = '⚡ 모두 압축';
+
+            if (batchCompressedFiles.length > 0) {
+                const totalSavings = ((1 - totalCompressedSize / totalOriginalSize) * 100).toFixed(1);
+                showToast('✅', `${batchCompressedFiles.length}개 압축 완료! (총 ${totalSavings}% 절감)`);
+                
+                // ZIP 다운로드 버튼 표시
+                const zipBtn = document.getElementById('downloadZipBtn');
+                zipBtn.style.display = 'block';
+                zipBtn.textContent = `📦 ZIP으로 다운로드 (${formatBytes(totalCompressedSize)})`;
+            }
+        }
+
+        async function downloadAsZip() {
+            if (batchCompressedFiles.length === 0) return;
+
+            const zipBtn = document.getElementById('downloadZipBtn');
+            zipBtn.disabled = true;
+            zipBtn.textContent = '📦 ZIP 생성 중...';
+
+            try {
+                const zip = new JSZip();
+                
+                // 모든 압축된 파일을 ZIP에 추가
+                batchCompressedFiles.forEach(({name, blob}) => {
+                    zip.file(name, blob);
+                });
+
+                // ZIP 파일 생성
+                const zipBlob = await zip.generateAsync({
+                    type: 'blob',
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 6 }
+                });
+
+                // 다운로드
+                const timestamp = new Date().toISOString().slice(0, 10);
+                downloadBlob(zipBlob, `compressed_images_${timestamp}.zip`);
+                
+                showToast('⬇️', 'ZIP 파일 다운로드 시작!');
+            } catch (err) {
+                showToast('❌', 'ZIP 생성 중 오류가 발생했습니다');
+                console.error('ZIP creation error:', err);
+            }
+
+            zipBtn.disabled = false;
+            zipBtn.textContent = `📦 ZIP으로 다운로드 (${formatBytes(batchCompressedFiles.reduce((acc, f) => acc + f.compressedSize, 0))})`;
+        }
+
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+
+        function showMainContent() {
+            dropZone.style.display = 'none';
+            mainContent.classList.add('active');
+        }
+
+        function updateFileInfo() {
+            document.getElementById('fileName').textContent = originalFile.name;
+            document.getElementById('fileDimensions').textContent = 
+                `${originalImage.naturalWidth} × ${originalImage.naturalHeight}`;
+            document.getElementById('fileType').textContent = originalFile.type.split('/')[1].toUpperCase();
+            document.getElementById('originalSize').textContent = formatBytes(originalFile.size);
+            
+            resizeWidth.value = originalImage.naturalWidth;
+            resizeHeight.value = originalImage.naturalHeight;
+        }
+
+        // Quality Slider
+        qualitySlider.addEventListener('input', () => {
+            qualityValue.textContent = `${qualitySlider.value}%`;
+        });
+
+        qualitySlider.addEventListener('change', () => {
+            if (originalImage) compressImage();
+        });
+
+        // Output Format
+        outputFormat.addEventListener('change', () => {
+            if (originalImage) compressImage();
+        });
+
+        // Resize Toggle
+        enableResize.addEventListener('change', () => {
+            resizeInputs.style.display = enableResize.checked ? 'grid' : 'none';
+            if (originalImage && enableResize.checked) {
+                resizeWidth.value = originalImage.naturalWidth;
+                resizeHeight.value = originalImage.naturalHeight;
+            }
+        });
+
+        // Maintain Aspect Ratio
+        let aspectRatio = 1;
+        
+        resizeWidth.addEventListener('input', () => {
+            if (maintainRatio.checked && originalImage) {
+                aspectRatio = originalImage.naturalWidth / originalImage.naturalHeight;
+                resizeHeight.value = Math.round(resizeWidth.value / aspectRatio);
+            }
+        });
+
+        resizeHeight.addEventListener('input', () => {
+            if (maintainRatio.checked && originalImage) {
+                aspectRatio = originalImage.naturalWidth / originalImage.naturalHeight;
+                resizeWidth.value = Math.round(resizeHeight.value * aspectRatio);
+            }
+        });
+
+        // Compress Button
+        compressBtn.addEventListener('click', () => {
+            if (originalImage) compressImage();
+        });
+
+        // Main Compression Function
+        function compressImage() {
+            if (!originalImage) return;
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            let targetWidth = originalImage.naturalWidth;
+            let targetHeight = originalImage.naturalHeight;
+
+            if (enableResize.checked) {
+                targetWidth = parseInt(resizeWidth.value) || targetWidth;
+                targetHeight = parseInt(resizeHeight.value) || targetHeight;
+            }
+
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+
+            // Draw image
+            ctx.drawImage(originalImage, 0, 0, targetWidth, targetHeight);
+
+            const quality = qualitySlider.value / 100;
+            const format = outputFormat.value;
+            const mimeType = `image/${format}`;
+
+            // Convert to blob
+            canvas.toBlob((blob) => {
+                compressedBlob = blob;
+                compressedDataUrl = canvas.toDataURL(mimeType, quality);
+
+                // Update preview
+                previewImage.src = compressedDataUrl;
+
+                // Update stats
+                document.getElementById('compressedSize').textContent = formatBytes(blob.size);
+                
+                const savings = ((1 - blob.size / originalFile.size) * 100).toFixed(1);
+                const savingsEl = document.getElementById('savings');
+                savingsEl.textContent = `${savings}%`;
+                savingsEl.className = savings > 0 ? 'stat-value success' : 'stat-value warning';
+
+                downloadBtn.disabled = false;
+                showToast('✅', '압축 완료!');
+            }, mimeType, quality);
+        }
+
+        function compressImageToBlob(img, quality, format) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                let targetWidth = img.naturalWidth;
+                let targetHeight = img.naturalHeight;
+
+                if (enableResize.checked) {
+                    targetWidth = parseInt(resizeWidth.value) || targetWidth;
+                    targetHeight = parseInt(resizeHeight.value) || targetHeight;
+                }
+
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                canvas.toBlob((blob) => {
+                    resolve(blob);
+                }, `image/${format}`, quality);
+            });
+        }
+
+        // Preview Tabs
+        document.querySelectorAll('.preview-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const view = tab.dataset.view;
+                if (view === 'original') {
+                    previewImage.src = originalImage.src;
+                } else if (view === 'compressed') {
+                    if (compressedDataUrl) {
+                        previewImage.src = compressedDataUrl;
+                    }
+                } else if (view === 'compare') {
+                    showComparisonView();
+                }
+            });
+        });
+
+        function showComparisonView() {
+            if (!originalImage || !compressedDataUrl) return;
+
+            previewContainer.innerHTML = `
+                <div class="comparison-view" id="comparisonView">
+                    <div class="comparison-original">
+                        <img src="${originalImage.src}" alt="Original">
+                        <span class="comparison-label">원본</span>
+                    </div>
+                    <div class="comparison-compressed">
+                        <img src="${compressedDataUrl}" alt="Compressed">
+                        <span class="comparison-label">압축</span>
+                    </div>
+                    <div class="comparison-slider" id="comparisonSlider"></div>
+                </div>
+            `;
+
+            const slider = document.getElementById('comparisonSlider');
+            const view = document.getElementById('comparisonView');
+            const original = view.querySelector('.comparison-original');
+            let isDragging = false;
+
+            function updateSlider(x) {
+                const rect = view.getBoundingClientRect();
+                const percent = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
+                slider.style.left = `${percent}%`;
+                original.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+            }
+
+            slider.addEventListener('mousedown', () => isDragging = true);
+            document.addEventListener('mouseup', () => isDragging = false);
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) updateSlider(e.clientX);
+            });
+
+            view.addEventListener('touchmove', (e) => {
+                updateSlider(e.touches[0].clientX);
+            });
+        }
+
+        // Download
+        downloadBtn.addEventListener('click', () => {
+            if (!compressedBlob) return;
+            
+            const format = outputFormat.value;
+            const name = originalFile.name.replace(/\.[^.]+$/, `.${format}`);
+            downloadBlob(compressedBlob, name);
+            showToast('⬇️', '다운로드 시작!');
+        });
+
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // New Image
+        document.getElementById('newImage').addEventListener('click', () => {
+            originalImage = null;
+            originalFile = null;
+            compressedBlob = null;
+            compressedDataUrl = null;
+            files = [];
+            batchCompressedFiles = [];
+            
+            mainContent.classList.remove('active');
+            batchList.classList.remove('active');
+            dropZone.style.display = 'block';
+            fileInput.value = '';
+            
+            // Reset preview container
+            previewContainer.innerHTML = '<img id="previewImage" src="" alt="Preview">';
+            downloadBtn.disabled = true;
+        });
+
+        // Utilities
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showToast(icon, message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastIcon').textContent = icon;
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
+
