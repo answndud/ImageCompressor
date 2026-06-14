@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="dark">
+<html lang="ko" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🖼️ Image Compressor - 이미지 압축기</title>
+    <title>Image Compressor - 이미지 압축기</title>
     <meta name="description" content="브라우저에서 이미지 압축 및 리사이징. 서버 전송 없이 100% 클라이언트 처리.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -672,24 +672,232 @@
         .batch-remove:hover {
             color: var(--danger);
         }
+
+        /* Minimal light interface */
+        :root, [data-theme="light"] {
+            --bg-primary: #f7f8f8;
+            --bg-secondary: #f0f2f2;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-input: #eef0f1;
+            --text-primary: #111416;
+            --text-secondary: #4f5b61;
+            --text-muted: #7b878c;
+            --accent: #0f766e;
+            --accent-light: #0f766e;
+            --accent-glow: rgba(15, 118, 110, 0.08);
+            --success: #157f3b;
+            --warning: #9a6700;
+            --danger: #b42318;
+            --border: #d9dedf;
+            --shadow: 0 1px 2px rgba(17, 20, 22, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #101314;
+            --bg-secondary: #171b1d;
+            --bg-card: rgba(24, 28, 30, 0.92);
+            --bg-input: #202628;
+            --text-primary: #f2f4f4;
+            --text-secondary: #b4bdc1;
+            --text-muted: #7f8b91;
+            --accent: #72d6c9;
+            --accent-light: #72d6c9;
+            --accent-glow: rgba(114, 214, 201, 0.08);
+            --success: #8bd39a;
+            --warning: #e0b85f;
+            --danger: #ffb4ab;
+            --border: #30383c;
+            --shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+        }
+
+        body {
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1120px;
+            padding: 28px 18px;
+        }
+
+        header {
+            align-items: flex-start;
+            margin-bottom: 22px;
+        }
+
+        .logo-icon,
+        .drop-zone-icon {
+            display: none;
+        }
+
+        .logo h1 {
+            color: var(--text-primary);
+            background: none;
+            -webkit-text-fill-color: currentColor;
+            font-size: clamp(1.45rem, 3vw, 2.05rem);
+            font-weight: 600;
+        }
+
+        .logo span {
+            font-size: 0.86rem;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 0.62rem 1rem;
+            font-size: 0.84rem;
+            transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .btn:hover,
+        .btn-accent:hover,
+        .btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-accent,
+        .btn-success {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .drop-zone {
+            border-width: 1px;
+            border-radius: 10px;
+            padding: 42px 22px;
+            margin-bottom: 16px;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            background: var(--accent-glow);
+        }
+
+        .drop-zone h2 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .main-content {
+            gap: 14px;
+        }
+
+        .preview-section,
+        .controls-panel,
+        .stat-card,
+        .file-info,
+        .checkbox-group,
+        .batch-item,
+        .toast {
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .preview-section,
+        .controls-panel {
+            padding: 16px;
+        }
+
+        .preview-header {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .preview-tab,
+        .format-select,
+        .resize-inputs input {
+            border-radius: 8px;
+        }
+
+        .preview-tab.active {
+            background: var(--accent);
+        }
+
+        .preview-container {
+            border-radius: 8px;
+            min-height: 340px;
+        }
+
+        .comparison-slider {
+            background: var(--accent);
+        }
+
+        .comparison-slider::before {
+            content: '';
+            width: 14px;
+            height: 34px;
+            padding: 0;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            background: var(--accent);
+        }
+
+        .comparison-label {
+            border-radius: 6px;
+            background: rgba(17, 20, 22, 0.72);
+        }
+
+        .stats-grid {
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .stat-card,
+        .file-info {
+            padding: 12px;
+        }
+
+        .controls-title {
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        .control-group {
+            margin-bottom: 16px;
+        }
+
+        input[type="range"] {
+            height: 4px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb,
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            box-shadow: none;
+        }
+
+        .progress-fill {
+            background: var(--accent);
+        }
+
+        .batch-status {
+            border-radius: 6px;
+        }
+
+        footer {
+            padding: 22px;
+            font-size: 0.78rem;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo">
-                <span class="logo-icon">🖼️</span>
                 <div>
                     <h1>Image Compressor</h1>
                     <span>브라우저에서 이미지 압축</span>
                 </div>
             </div>
-            <button class="btn" id="themeToggle">🌙 다크</button>
+            <button class="btn" id="themeToggle">Light</button>
         </header>
 
         <!-- Drop Zone -->
         <div class="drop-zone" id="dropZone">
-            <div class="drop-zone-icon">📁</div>
             <h2>이미지를 드래그하거나 클릭하세요</h2>
             <p>JPEG, PNG, WebP 지원 · 최대 10MB · 여러 파일 가능</p>
             <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple>
@@ -708,7 +916,7 @@
                         <button class="preview-tab" data-view="compare">비교</button>
                         <button class="preview-tab" data-view="original">원본</button>
                     </div>
-                    <button class="btn" id="newImage">🔄 새 이미지</button>
+                    <button class="btn" id="newImage">새 이미지</button>
                 </div>
                 
                 <div class="preview-container" id="previewContainer">
@@ -733,7 +941,7 @@
 
             <!-- Controls Panel -->
             <aside class="controls-panel">
-                <div class="controls-title">⚙️ 압축 설정</div>
+                <div class="controls-title">압축 설정</div>
 
                 <div class="file-info" id="fileInfo">
                     <div class="file-name" id="fileName">-</div>
@@ -783,13 +991,13 @@
 
                 <div class="action-buttons">
                     <button class="btn btn-accent" id="compressBtn">
-                        ⚡ 압축하기
+                        압축하기
                     </button>
                     <button class="btn btn-success" id="downloadBtn" disabled>
-                        ⬇️ 다운로드
+                        다운로드
                     </button>
                     <button class="btn" id="downloadAllBtn" style="display: none;">
-                        📦 전체 다운로드 (ZIP)
+                        전체 다운로드 (ZIP)
                     </button>
                 </div>
             </aside>
@@ -801,7 +1009,7 @@
     </div>
 
     <div class="toast" id="toast">
-        <span id="toastIcon">✅</span>
+        <span id="toastIcon">OK</span>
         <span id="toastMessage">작업 완료!</span>
     </div>
 
@@ -837,7 +1045,7 @@
         const themeToggle = document.getElementById('themeToggle');
 
         // Theme Toggle
-        const savedTheme = localStorage.getItem('image-compressor-theme') || 'dark';
+        const savedTheme = localStorage.getItem('image-compressor-theme-v2') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         updateThemeButton(savedTheme);
 
@@ -845,12 +1053,12 @@
             const current = document.documentElement.getAttribute('data-theme');
             const next = current === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('image-compressor-theme', next);
+            localStorage.setItem('image-compressor-theme-v2', next);
             updateThemeButton(next);
         });
 
         function updateThemeButton(theme) {
-            themeToggle.textContent = theme === 'dark' ? '☀️ 라이트' : '🌙 다크';
+            themeToggle.textContent = theme === 'dark' ? 'Dark' : 'Light';
         }
 
         // Drag and Drop
@@ -951,11 +1159,11 @@
             batchControls.style.cssText = 'display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;';
             batchControls.innerHTML = `
                 <div style="display: flex; gap: 1rem;">
-                    <button class="btn btn-accent" id="compressAllBtn" style="flex: 1;">⚡ 모두 압축</button>
-                    <button class="btn" id="clearBatchBtn">🗑️ 초기화</button>
+                    <button class="btn btn-accent" id="compressAllBtn" style="flex: 1;">모두 압축</button>
+                    <button class="btn" id="clearBatchBtn">초기화</button>
                 </div>
                 <button class="btn btn-success" id="downloadZipBtn" style="display: none; width: 100%;">
-                    📦 ZIP으로 다운로드
+                    ZIP으로 다운로드
                 </button>
             `;
             batchList.appendChild(batchControls);
@@ -992,7 +1200,7 @@
             // 압축 버튼 비활성화
             const compressBtn = document.getElementById('compressAllBtn');
             compressBtn.disabled = true;
-            compressBtn.textContent = '⏳ 압축 중...';
+            compressBtn.textContent = '압축 중...';
 
             let totalOriginalSize = 0;
             let totalCompressedSize = 0;
@@ -1030,16 +1238,16 @@
 
             // 압축 버튼 복원
             compressBtn.disabled = false;
-            compressBtn.textContent = '⚡ 모두 압축';
+            compressBtn.textContent = '모두 압축';
 
             if (batchCompressedFiles.length > 0) {
                 const totalSavings = ((1 - totalCompressedSize / totalOriginalSize) * 100).toFixed(1);
-                showToast('✅', `${batchCompressedFiles.length}개 압축 완료! (총 ${totalSavings}% 절감)`);
+                showToast('OK', `${batchCompressedFiles.length}개 압축 완료 (총 ${totalSavings}% 절감)`);
                 
                 // ZIP 다운로드 버튼 표시
                 const zipBtn = document.getElementById('downloadZipBtn');
                 zipBtn.style.display = 'block';
-                zipBtn.textContent = `📦 ZIP으로 다운로드 (${formatBytes(totalCompressedSize)})`;
+                zipBtn.textContent = `ZIP으로 다운로드 (${formatBytes(totalCompressedSize)})`;
             }
         }
 
@@ -1048,7 +1256,7 @@
 
             const zipBtn = document.getElementById('downloadZipBtn');
             zipBtn.disabled = true;
-            zipBtn.textContent = '📦 ZIP 생성 중...';
+            zipBtn.textContent = 'ZIP 생성 중...';
 
             try {
                 const zip = new JSZip();
@@ -1069,14 +1277,14 @@
                 const timestamp = new Date().toISOString().slice(0, 10);
                 downloadBlob(zipBlob, `compressed_images_${timestamp}.zip`);
                 
-                showToast('⬇️', 'ZIP 파일 다운로드 시작!');
+                showToast('OK', 'ZIP 파일 다운로드 시작');
             } catch (err) {
-                showToast('❌', 'ZIP 생성 중 오류가 발생했습니다');
+                showToast('ERR', 'ZIP 생성 중 오류가 발생했습니다');
                 console.error('ZIP creation error:', err);
             }
 
             zipBtn.disabled = false;
-            zipBtn.textContent = `📦 ZIP으로 다운로드 (${formatBytes(batchCompressedFiles.reduce((acc, f) => acc + f.compressedSize, 0))})`;
+            zipBtn.textContent = `ZIP으로 다운로드 (${formatBytes(batchCompressedFiles.reduce((acc, f) => acc + f.compressedSize, 0))})`;
         }
 
         function readFileAsDataUrl(file) {
@@ -1200,7 +1408,7 @@
                 savingsEl.className = savings > 0 ? 'stat-value success' : 'stat-value warning';
 
                 downloadBtn.disabled = false;
-                showToast('✅', '압축 완료!');
+                showToast('OK', '압축 완료');
             }, mimeType, quality);
         }
 
@@ -1293,7 +1501,7 @@
             const format = outputFormat.value;
             const name = originalFile.name.replace(/\.[^.]+$/, `.${format}`);
             downloadBlob(compressedBlob, name);
-            showToast('⬇️', '다운로드 시작!');
+            showToast('OK', '다운로드 시작');
         });
 
         function downloadBlob(blob, filename) {
@@ -1343,4 +1551,3 @@
     </script>
 </body>
 </html>
-
