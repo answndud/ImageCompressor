@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="light">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,18 +25,6 @@
             --danger: #ef4444;
             --border: rgba(255, 255, 255, 0.08);
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        }
-
-        [data-theme="light"] {
-            --bg-primary: #f8fafc;
-            --bg-secondary: #ffffff;
-            --bg-card: #ffffff;
-            --bg-input: #f1f5f9;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #94a3b8;
-            --border: rgba(0, 0, 0, 0.08);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -674,7 +662,7 @@
         }
 
         /* Minimal light interface */
-        :root, [data-theme="light"] {
+        :root {
             --bg-primary: #f7f8f8;
             --bg-secondary: #f0f2f2;
             --bg-card: rgba(255, 255, 255, 0.9);
@@ -682,32 +670,14 @@
             --text-primary: #111416;
             --text-secondary: #4f5b61;
             --text-muted: #7b878c;
-            --accent: #0f766e;
-            --accent-light: #0f766e;
-            --accent-glow: rgba(15, 118, 110, 0.08);
-            --success: #157f3b;
+            --accent: #1769aa;
+            --accent-light: #3b82c4;
+            --accent-glow: rgba(23, 105, 170, 0.08);
+            --success: #1769aa;
             --warning: #9a6700;
             --danger: #b42318;
             --border: #d9dedf;
-            --shadow: 0 1px 2px rgba(17, 20, 22, 0.06);
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #101314;
-            --bg-secondary: #171b1d;
-            --bg-card: rgba(24, 28, 30, 0.92);
-            --bg-input: #202628;
-            --text-primary: #f2f4f4;
-            --text-secondary: #b4bdc1;
-            --text-muted: #7f8b91;
-            --accent: #72d6c9;
-            --accent-light: #72d6c9;
-            --accent-glow: rgba(114, 214, 201, 0.08);
-            --success: #8bd39a;
-            --warning: #e0b85f;
-            --danger: #ffb4ab;
-            --border: #30383c;
-            --shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+            --shadow: none;
         }
 
         body {
@@ -715,7 +685,7 @@
         }
 
         .container {
-            max-width: 1120px;
+            max-width: 1350px;
             padding: 28px 18px;
         }
 
@@ -882,6 +852,182 @@
             padding: 22px;
             font-size: 0.78rem;
         }
+
+        /* Shared sharp light interface */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-input: #f3f5f5;
+            --text-primary: #111516;
+            --text-secondary: #4b5659;
+            --text-muted: #778285;
+            --accent: #1769aa;
+            --accent-light: #3b82c4;
+            --accent-glow: rgba(23, 105, 170, 0.12);
+            --success: #1769aa;
+            --warning: #9a6700;
+            --danger: #b42318;
+            --border: #c8d0d1;
+            --shadow: none;
+        }
+
+        html,
+        body,
+        body *,
+        body *::before,
+        body *::after {
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+
+        body {
+            background: #ffffff !important;
+        }
+
+        .container {
+            max-width: 1350px;
+        }
+
+        .logo h1 {
+            background: none !important;
+            color: var(--text-primary) !important;
+            -webkit-text-fill-color: currentColor !important;
+        }
+
+        .drop-zone,
+        .preview-section,
+        .controls-panel,
+        .preview-container,
+        .stat-card,
+        .file-info,
+        .checkbox-group,
+        .batch-item,
+        .toast,
+        .preview-tab,
+        .format-select,
+        .resize-inputs input,
+        .btn {
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .drop-zone {
+            background: #ffffff !important;
+            border: 1px dashed var(--border) !important;
+            padding: 3.5rem 2rem;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            background: var(--accent-glow) !important;
+            border-color: var(--accent) !important;
+            transform: none !important;
+        }
+
+        .main-content.active {
+            grid-template-columns: minmax(0, 1fr) 320px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .preview-section,
+        .controls-panel {
+            min-width: 0;
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border) !important;
+        }
+
+        .preview-header {
+            border-bottom-color: var(--border) !important;
+        }
+
+        .preview-container,
+        .file-info,
+        .stat-card,
+        .checkbox-group,
+        .batch-item {
+            background: var(--bg-input) !important;
+            border: 1px solid var(--border) !important;
+        }
+
+        .preview-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0;
+            border: 1px solid var(--border);
+        }
+
+        .preview-tab {
+            min-width: 0;
+            min-height: 40px;
+            padding: 0 0.85rem;
+            border: 0 !important;
+            background: transparent !important;
+        }
+
+        .preview-tab.active {
+            background: var(--accent) !important;
+            color: #ffffff !important;
+        }
+
+        .btn {
+            background-image: none !important;
+            transform: none !important;
+            transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease !important;
+        }
+
+        .btn:hover {
+            border-color: var(--accent) !important;
+        }
+
+        .btn-accent,
+        .btn-success {
+            background: var(--accent) !important;
+            border-color: var(--accent) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-accent:hover,
+        .btn-success:hover {
+            background: #0d4f86 !important;
+        }
+
+        .comparison-slider,
+        .comparison-slider::before {
+            background: var(--accent) !important;
+            border-radius: 0 !important;
+        }
+
+        .comparison-label {
+            border-radius: 0 !important;
+            background: rgba(17, 21, 22, 0.82) !important;
+        }
+
+        input:focus,
+        select:focus,
+        .format-select:focus,
+        .resize-inputs input:focus {
+            outline: none;
+            border-color: var(--accent) !important;
+        }
+
+        input[type="range"]::-webkit-slider-thumb,
+        input[type="range"]::-moz-range-thumb {
+            border-radius: 0 !important;
+            background: var(--accent) !important;
+            box-shadow: none !important;
+        }
+
+        .progress-fill {
+            background: var(--accent) !important;
+        }
+
+        @media (max-width: 900px) {
+            .main-content.active {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -893,7 +1039,6 @@
                     <span>브라우저에서 이미지 압축</span>
                 </div>
             </div>
-            <button class="btn" id="themeToggle">Light</button>
         </header>
 
         <!-- Drop Zone -->
@@ -1042,25 +1187,6 @@
         const maintainRatio = document.getElementById('maintainRatio');
         const compressBtn = document.getElementById('compressBtn');
         const downloadBtn = document.getElementById('downloadBtn');
-        const themeToggle = document.getElementById('themeToggle');
-
-        // Theme Toggle
-        const savedTheme = localStorage.getItem('image-compressor-theme-v2') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeButton(savedTheme);
-
-        themeToggle.addEventListener('click', () => {
-            const current = document.documentElement.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('image-compressor-theme-v2', next);
-            updateThemeButton(next);
-        });
-
-        function updateThemeButton(theme) {
-            themeToggle.textContent = theme === 'dark' ? 'Dark' : 'Light';
-        }
-
         // Drag and Drop
         dropZone.addEventListener('click', () => fileInput.click());
         
