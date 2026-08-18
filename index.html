@@ -933,6 +933,64 @@
             border-color: #101416 !important;
         }
     </style>
+    <!-- Rational project palette -->
+    <style id="rational-project-palette">
+        :root, [data-theme="light"], [data-theme="dark"] {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F4F7F9;
+            --bg-tertiary: #F4F7F9;
+            --bg-card: #FFFFFF;
+            --bg-card-hover: #F4F7F9;
+            --bg-input: #EEF3F6;
+            --bg: #FFFFFF;
+            --panel: #FFFFFF;
+            --panel-strong: #F4F7F9;
+            --preview-bg: #F4F7F9;
+            --text-primary: #1C2730;
+            --text-secondary: #64727C;
+            --text-muted: #64727C;
+            --border: #D8E1E7;
+            --border-color: #D8E1E7;
+            --border-hover: #5C8199;
+            --accent: #5C8199;
+            --accent-primary: #5C8199;
+            --accent-secondary: #42677F;
+            --accent-light: #F4F7F9;
+            --accent-strong: #42677F;
+            --accent-dim: #F4F7F9;
+            --primary: #5C8199;
+            --primary-color: #5C8199;
+            --success: #4B8062;
+            --warning: #A87835;
+            --danger: #A65B5B;
+            --error: #A65B5B;
+            --gradient-accent: none;
+            --gradient-1: none;
+            --gradient-2: none;
+            --gradient-3: none;
+        }
+
+        html, body {
+            background: #FFFFFF !important;
+            color: #1C2730 !important;
+        }
+
+        button, .button, .btn, .action-btn, .primary,
+        input[type="submit"], input[type="button"] {
+            background: var(--accent) !important;
+            background-image: none !important;
+            color: #1C2730 !important;
+            border-color: var(--accent) !important;
+            box-shadow: none !important;
+        }
+
+        button:hover, .button:hover, .btn:hover, .action-btn:hover,
+        input[type="submit"]:hover, input[type="button"]:hover {
+            background: var(--accent-strong) !important;
+            border-color: var(--accent-strong) !important;
+            color: #FFFFFF !important;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
